@@ -8,8 +8,18 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'Home',
+      redirect: {
+        name: 'EventListView'
+      },
+    },
+    {
+      path: '/list',
       name: 'EventListView',
       component: EventListView,
+      props: route => ({
+        page:  Number(route.query.page) || 1,
+      })
     },
     {
       name: 'EventDetailView',

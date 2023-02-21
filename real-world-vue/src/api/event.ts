@@ -1,4 +1,7 @@
-import axios, { type AxiosResponse } from 'axios'
+import { useRequest } from '@/utils/request'
+import type { AxiosResponse } from 'axios'
+
+const request = useRequest();
 
 export interface Event {
   id: number
@@ -12,18 +15,24 @@ export interface Event {
   organizer: string
 }
 
-export const getEvents = (): Promise<Event[]> => {
-  return axios
-    .get('https://my-json-server.typicode.com/Code-Pop/Real-World_Vue-3/events')
-    .then((res: AxiosResponse<Array<Event>>) => {
-      return res.data
+export const getEvents = (prePage: number, page: number): Promise<{
+  data: Array<Event>,
+  total: number,
+}> => {
+  return request
+    .get(`/events?_limit=${prePage}&_page=${page}`)
+    .then((res: AxiosResponse<Event[]>) => {
+      return {
+        data: res.data,
+        total: Number(res.headers['x-total-count'])
+      }
     })
 }
 
 export const getEvent = (id: number): Promise<Event> => {
-  return axios
+  return request
     .get(
-      `https://my-json-server.typicode.com/Code-Pop/Real-World_Vue-3/events/${id}`
+      `/events/${id}`
     )
     .then((res: AxiosResponse<Event>) => {
       return res.data
